@@ -5,7 +5,7 @@ const michelin = require('./michelin-generalTest');
 
 async function sandbox (searchLink) { 
 try {
-  const restaurant = await michelin.scrape_Restaurant(searchLink);
+  const restaurant = await michelin.scrape_Restaurants(searchLink);
   process.exit(0);
   } 
   catch (e) {

@@ -33,11 +33,11 @@ const parse_Restaurant = data => {
 	const $ = cheerio.load(data);
 	const restaurant=[];
 	const name=$('body > main > div.restaurant-details > div.container > div > div.col-xl-4.order-xl-8.col-lg-5.order-lg-7.restaurant-details__aside > div.restaurant-details__heading.d-lg-none > h2').text();
-	const adress=$('body > main > div.restaurant-details > div.container > div > div.col-xl-4.order-xl-8.col-lg-5.order-lg-7.restaurant-details__aside > div.restaurant-details__heading.d-lg-none > ul').text();
-	const tel=$('body > main > div.restaurant-details > div.container > div > div.col-xl-8.col-lg-7 > section:nth-child(4) > div.row > div:nth-child(1) > div > div:nth-child(1) > div > div > a').text();
-	const experience=$('#experience-section > ul > li:nth-child(2)').text();
-	restaurant.push(name, adress, tel, experience);
-	AppendJsonFile(restaurant, 'restaurant.json');
+	const address=$('body > main > div.restaurant-details > div.container > div > div.col-xl-4.order-xl-8.col-lg-5.order-lg-7.restaurant-details__aside > div.restaurant-details__heading.d-lg-none > ul > li:nth-child(1)').text();
+	//const tel=$('body > main > div.restaurant-details > div.container > div > div.col-xl-8.col-lg-7 > section:nth-child(4) > div.row > div:nth-child(1) > div > div:nth-child(1) > div > div > a').text();
+	//const experience=$('#experience-section > ul > li:nth-child(2)').text();
+	restaurant.push(name, address); //tel, experience);
+	AppendJsonFile(restaurant,'restaurant.json');
 	return restaurant;
 };
 
@@ -50,17 +50,25 @@ function WriteJsonFile(array, filename) {
 
 
 function ReadJsonFile(filename) {
-	let rawdata = fs.readFileSync(filename);
+	//jsonfile.readFile(filename, function (err, obj) {
+  		//if (err) console.error(err)
+  			//console.dir(obj)
+	//})
+	let rawdata=fs.readFileSync(filename);
 	let value = JSON.parse(rawdata);
 	return value;
 }
 
 
 function AppendJsonFile(data, filename) {
-	var arrayToString = JSON.stringify(Object.assign({}, data)); 
-	let rawdata = fs.appendFileSync(filename, data);
-	let value = JSON.parse(rawdata);
-	return value;
+	const restaurants=ReadJsonFile(filename);
+    var result = [];
+	for(var i in restaurants)
+    	result.push(restaurants[i]);
+	for(var i in data) 
+    	result.push(data[i]);
+    WriteJsonFile(result, filename);
+	return result;
 }
 
 
@@ -95,16 +103,30 @@ module.exports.scrape_NumberOfPages = async url => {
 };
 
 
-module.exports.scrape_Restaurant = async url => {
-  		const response = await axios(url);
- 	 	const {data, status} = response;
- 	 	
-  		if (status >= 200 && status < 300) {
-    		return parse_Restaurant(data);
-  		}
-  	console.error(status);
+module.exports.scrape_Restaurants = async url => {
+	let value = ReadJsonFile('urls.json');
+	let value1 = ReadJsonFile('value.json');
+	const info=[];
+	for(var k=0;k<value1[0];k++){
+    		for(var l=0;l<value[k].length;l++) {
+  				if(value[k][l])
+    				info.push(await scrape_EachRestaurant(value[k][l]));
+    		}
+  	}
+  	console.log(info);
+  	return info;
+
+	console.error(status);
 	return null;
 };
+
+
+async function scrape_EachRestaurant(element) {
+    const response = await axios(element);
+	const {data, status} = response;
+ 	if (status >= 200 && status < 300)
+    	return parse_Restaurant(data);
+}
 
 
 module.exports.get = () => {

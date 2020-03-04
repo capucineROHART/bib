@@ -103,20 +103,25 @@ module.exports.scrape_NumberOfPages = async url => {
 };
 
 
-module.exports.scrape_Restaurant = async url => {
+async function scrape_EachRestaurant(element) {
+    const response = await axios(element);
+	const {data, status} = response;
+ 	if (status >= 200 && status < 300)
+    	return parse_Restaurant(data);
+}
+
+
+module.exports.scrape_Restaurants = async url => {
 	let value = ReadJsonFile('urls.json');
 	let value1 = ReadJsonFile('value.json');
 	const info=[];
-	for(var k=1;k<=value1[0];k++){
-  		if(value[k])
-    		value[k].forEach( async element => {
-    			console.log(element);
-    			const response = await axios(element);
- 				const {data, status} = response;
- 				if (status >= 200 && status < 300)
-    				info.push(parse_Restaurant(data));
-    			});
+	for(var k=0;k<value1[0];k++){
+    		for(var l=1;l<=value[k].length;l++) {
+  				if(value[k][l])
+    				info.push(await scrape_EachRestaurant(value[k][l]));
+    		}
   	}
+  	console.log(info);
   	return info;
 
 	console.error(status);
