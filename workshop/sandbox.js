@@ -5,7 +5,7 @@ const restaurateurs = require('./restaurateurs');
 
 async function sandbox (searchLink) { 
 try {
-    const restaurateur = await restaurateurs.scrape_Restaurant(searchLink);
+    //const restaurateur = await restaurateurs.scrape_Restaurant(searchLink);
     //const nb = await michelin.scrape_NumberOfPages(`https://guide.michelin.com/fr/fr/restaurants/bib-gourmand/page/`);
     //const site = await michelin.scrape_Pages(`https://guide.michelin.com/fr/fr/restaurants/bib-gourmand/page/`);
     //const restaurant = await michelin.scrape_Restaurants(searchLink);

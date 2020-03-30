@@ -42,12 +42,6 @@ const parse_Restaurant = data => {
 };
 
 
-function WriteJsonFile(array, filename) {
-	var arrayToString = JSON.stringify(Object.assign({}, array));
-	fs.writeFileSync(filename, arrayToString);
-	return arrayToString;
-}
-
 
 function ReadJsonFile(filename) {
 	//jsonfile.readFile(filename, function (err, obj) {
